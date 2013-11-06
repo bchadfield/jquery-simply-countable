@@ -1,10 +1,16 @@
 # jQuery Simply Countable plugin
 
-jQuery plugin that provides a character counter for any text input or textarea. Works when typing and pasting text using the mouse.
+Fork of the original jQuery plugin to now provide a character counter for editable html tags. Works when typing and pasting text using the mouse.
+Also provides the 
 
+Original version:
 * version - 0.5.0
 * homepage - [http://github.com/aaronrussell/jquery-simply-countable/](http://github.com/aaronrussell/jquery-simply-countable/)
 * author - [Aaron Russell](http://www.aaronrussell.co.uk)
+
+This version:
+* homepage - [http://github.com/bchadfield/jquery-simply-countable/](http://github.com/bchadfield/jquery-simply-countable/)
+* author - [Ben Chadfield](http://chadfield.org)
 
 ## Usage
 
@@ -18,8 +24,8 @@ Advanced usage:
         counter:            '#counter',
         countType:          'characters',
         maxCount:           140,
+        operator:			'<=',
         strictMax:          false,
-        countDirection:     'down',
         safeClass:          'safe',
         overClass:          'over',
         thousandSeparator:  ',',
@@ -33,8 +39,8 @@ Advanced usage:
 * `counter` - A jQuery selector to match the 'counter' element. Defaults to `#counter`.
 * `countType` - Select whether to count `characters` or `words`. Defaults to `characters`.
 * `maxCount` - The maximum character (or word) count of the text input or textarea. Defaults to `140`.
+* `operator` - Part of the equation `countType` `operator` `maxCount`. This replaces the previous `up` or `down` option. Defaults to `<=`.
 * `strictMax` - Prevents the user from being able to exceed the `maxCount`. Defaults to `false`.
-* `countDirection` - Select whether to count `down` or `up`. Defaults to `down`.
 * `safeClass` - The CSS class applied to the counter element when it is within the maxCount figure. Defaults to `safe`.
 * `overClass` - The CSS class applied to the counter element when it exceeds the maxCount figure. Defaults to `over`.
 * `thousandSeparator` - The separator for multiples of 1,000. Set to `false` to disable. Defaults to `,`.

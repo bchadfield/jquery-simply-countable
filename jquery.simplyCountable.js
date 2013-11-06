@@ -19,8 +19,9 @@
       counter:            '#counter',
       countType:          'characters',
       maxCount:           140,
+      operator:           '<=',
       strictMax:          false,
-      countDirection:     'down',
+      operator:           "<=", 
       safeClass:          'safe',
       overClass:          'over',
       thousandSeparator:  ',',
@@ -32,10 +33,25 @@
     var navKeys = [33,34,35,36,37,38,39,40];
 
     return $(this).each(function(){
-
       var countable = $(this);
       var counter = $(options.counter);
       if (!counter.length) { return false; }
+
+      var direction;
+      var outcome;
+      switch(options.operator) {
+        case '<':
+          options.maxCount -= 1;
+        case '<=':
+          direction = "down";
+          break;
+        case '>':
+          options.maxCount -= 1;
+        case '>=':
+        case '==':
+          direction = "up";
+          break;
+      }
       
       var countCheck = function(){
              
@@ -47,7 +63,7 @@
         }
         
         var countInt = function(){
-          return (options.countDirection === 'up') ? revCount : count;
+          return direction == "down" ? count : revCount;
         }
         
         var numberFormat = function(ct){
@@ -66,16 +82,31 @@
           return prefix + ct;
         }
 
-        var changeCountableValue = function(val){
-          countable.val(val).trigger('change');
+        var changeCountableValue = function(text){
+          countable.text(text).trigger('change');
+        }
+
+        var cleanText = function () {
+          return $.trim(countable.text().replace(/\t+/g, " ").replace(/\n/g, " ").replace(/\s+/g, " "));
+        }
+
+        var overCount = function() {
+          counter.removeClass(options.safeClass).addClass(options.overClass);
+          options.onOverCount(countInt(), countable, counter);
+        }
+
+        var safeCount = function() {
+          counter.removeClass(options.overClass).addClass(options.safeClass);
+          options.onSafeCount(countInt(), countable, counter);
         }
         
+        var text = cleanText();
         /* Calculates count for either words or characters */
         if (options.countType === 'words'){
-          count = options.maxCount - $.trim(countable.val()).split(/\s+/).length;
-          if (countable.val() === ''){ count += 1; }
+          count = options.maxCount - text.split(/\s+/).length;
+          if (text === ''){ count += 1; }
         }
-        else { count = options.maxCount - countable.val().length; }
+        else { count = options.maxCount - text.length; }
         revCount = reverseCount(count);
         
         /* If strictMax set restrict further characters */
@@ -94,22 +125,14 @@
           count = 0, revCount = options.maxCount;
         }
         
-        counter.text(numberFormat(countInt()));
-        
+        counter.text(numberFormat(countInt()) + " " + options.countType);
         /* Set CSS class rules and API callbacks */
-        if (!counter.hasClass(options.safeClass) && !counter.hasClass(options.overClass)){
-          if (count < 0){ counter.addClass(options.overClass); }
-          else { counter.addClass(options.safeClass); }
+        if ((count < 0) || 
+            (count != 0 && options.operator == "==")) {
+          overCount();
+        } else {
+          safeCount();
         }
-        else if (count < 0 && counter.hasClass(options.safeClass)){
-          counter.removeClass(options.safeClass).addClass(options.overClass);
-          options.onOverCount(countInt(), countable, counter);
-        }
-        else if (count >= 0 && counter.hasClass(options.overClass)){
-          counter.removeClass(options.overClass).addClass(options.safeClass);
-          options.onSafeCount(countInt(), countable, counter);
-        }
-        
       };
       
       countCheck();
